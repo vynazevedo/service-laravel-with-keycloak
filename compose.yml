@@ -1,0 +1,39 @@
+networks:
+  network:
+
+services:
+  nginx:
+    container_name: nginx
+    restart: always
+    build:
+      args:
+        user: ubuntu
+        uid: 1000
+      context: .
+      dockerfile: ./environment/nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9001:9001"
+    volumes:
+      - ./src/:/var/www/html
+    depends_on:
+      - php
+    networks:
+      - network
+
+  php:
+    container_name: php
+    restart: always
+    build:
+      args:
+        user: ubuntu
+        uid: 1000
+      context: .
+      dockerfile: ./environment/php/Dockerfile
+    volumes:
+      - ./src/:/var/www/html
+    ports:
+      - "9000:9000"
+    networks:
+      - network
