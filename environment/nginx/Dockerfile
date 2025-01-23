@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 nginx:alpine
+# syntax = docker/dockerfile:experimental
+FROM nginx:alpine
 
 ARG NGINX_LISTEN_PORT=80
 ARG NGINX_SERVER_NAME=_

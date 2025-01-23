@@ -49,10 +49,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # Copy only necessary files for dependency installation
 COPY src/composer.json src/composer.lock /var/www/html/
 
-# Install PHP dependencies
-RUN composer install --no-scripts --no-plugins --ignore-platform-reqs --no-dev --optimize-autoloader && \
-    rm -rf /root/.composer/cache
-
 # Copy remaining application files
 COPY src/ /var/www/html
 
@@ -61,3 +57,9 @@ RUN chmod -R 1777 /tmp/ && \
     find /var/www/html -type f -exec chmod 644 {} \; && \
     find /var/www/html -type d -exec chmod 755 {} \; && \
     chown -R www-data:www-data /var/www/html
+
+COPY environment/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php-fpm"]
