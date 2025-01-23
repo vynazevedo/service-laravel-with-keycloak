@@ -1,5 +1,10 @@
 networks:
   network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
 
 services:
   nginx:
@@ -37,3 +42,35 @@ services:
       - "9000:9000"
     networks:
       - network
+
+  postgres:
+      image: postgres:13
+      container_name: keycloak-postgres
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: keycloak
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      networks:
+        - network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - network
+    command:
+      - start-dev
