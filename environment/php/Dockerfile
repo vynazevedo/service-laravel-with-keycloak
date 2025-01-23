@@ -40,6 +40,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gd && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install XDebug
+RUN pecl install xdebug
+
+# Enable XDebug configuration
+RUN docker-php-ext-enable xdebug
+
 # Copy PHP configuration overrides
 COPY environment/php/confs/php-ini-overrides.ini /usr/local/etc/php/conf.d/99-overrides.ini
 
